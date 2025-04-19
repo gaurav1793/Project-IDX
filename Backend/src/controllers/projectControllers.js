@@ -1,26 +1,29 @@
-import util from 'util'
-import  child_process from 'child_process'
-import uuid4 from 'uuid4'
-import fs  from 'fs/promises'
-import { PROJECT_COMMAND } from '../config/serverConfig.js';
+import { createProjectService, getProjectTreeService } from '../services/projectService.js';
 
-const exec = util.promisify(child_process.exec);
 
 
 export const projectControllers = async(req,res)=>{
     try {
-        //create unique id and after that create a new folder in projects folder using that id as folder name
-        const projectId = uuid4();
-        console.log(projectId);
-        await fs.mkdir(`./projects/${projectId}`);
-
-        //need to run npm create vite command to create projct in that folder
-        const response = await exec(PROJECT_COMMAND,{
-            cwd:`./projects/${projectId}`
-        })
-
+        const projectId=await createProjectService();
         return res.status(200).json({message : "project creted" , data:projectId});
     } catch (error) {
-        throw error;
+        
+    }
+}
+
+export const getProjectTreeController = async(req,res)=>{
+    try {
+        const projectId = req.params.projectId
+        console.log("this is project id",projectId);
+        const tree = await getProjectTreeService(projectId);
+        console.log("this is tree",tree);
+        res.status(200).json({
+            data:tree,
+            message:"successfully fetched tree path"
+        })
+    } catch (error) {
+        res.status(400).json({
+            message:error.message
+        })
     }
 }
