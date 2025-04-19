@@ -2,6 +2,7 @@ import util from 'util'
 import  child_process from 'child_process'
 import uuid4 from 'uuid4'
 import fs  from 'fs/promises'
+import { PROJECT_COMMAND } from '../config/serverConfig.js';
 
 const exec = util.promisify(child_process.exec);
 
@@ -14,7 +15,7 @@ export const projectControllers = async(req,res)=>{
         await fs.mkdir(`./projects/${projectId}`);
 
         //need to run npm create vite command to create projct in that folder
-        const response = await exec('npm create vite@latest sandbox -- --template react',{
+        const response = await exec(PROJECT_COMMAND,{
             cwd:`./projects/${projectId}`
         })
 
