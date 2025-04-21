@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { IoIosArrowForward ,IoIosArrowDown } from "react-icons/io";
 import FileIcon from '../../atoms/FileIcon/FileIcon';
+import { useEditorSocketStore } from '../../../store/editorSocketStore';
 
 
 const TreeNode = ({fileFolderData}) => {
     const [visiblity , setVisiblity]=useState({});
+    const {editorSocket} = useEditorSocketStore();
 
     function toggleVisiblity(name){
         setVisiblity({...visiblity, [name]:!visiblity[name]} )
@@ -20,18 +22,26 @@ const TreeNode = ({fileFolderData}) => {
         // but we want that actual file name public should be key
 
     }
+
+    function handleClick(fileFolderData){
+        console.log("hi form handle click",fileFolderData); 
+        editorSocket.emit('readFile',{
+            pathToFileOrFolder:fileFolderData.path
+        })
+    }
   return (
     (fileFolderData && 
         <div className='pl-[10px]'>
             {
                 fileFolderData.children?
                 (<button onClick={()=>{toggleVisiblity(fileFolderData.name)}} className='pt-[5px] border-none outline-none cursor-pointer  text-[16px] text-white flex justify-center items-center'>
-                  { !visiblity[fileFolderData.name]? <IoIosArrowForward className='h-5 w-5 pr-[4px]' />:<IoIosArrowDown className='h-5 w-5 pr-[4px]'/>} <FileIcon extension={'folder'}/>{fileFolderData.name}
+                  { !visiblity[fileFolderData.name]? <IoIosArrowForward className='h-5 w-5' />:<IoIosArrowDown className='h-5 w-5'/>} <FileIcon extension={'folder'}/>{fileFolderData.name}
                 </button>):
-                (<p className='pt-[5px]  pl-[10px]  text-white cursor-pointer text-[15px] flex'>
-                    <div className='flex justify-center items-center'>
+                (<p className='pt-[5px]  pl-[20px]  text-white cursor-pointer text-[15px] flex'
+                    onClick={()=>{handleClick(fileFolderData)}}
+                >
                         <FileIcon extension={fileFolderData.name.split(".").pop()}/> {fileFolderData.name}
-                    </div>
+                    
                 </p>)
             }
             {
