@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import Editor from '@monaco-editor/react'
-import { useEditorSocketStore } from '../../../store/editorSocketStore'
+
 import { useActiveFileTabStore } from '../../../store/activeFileTabStore'
+import { useEditorSocketStore } from '../../../store/editorSocketStore'
 
 const EditorComponent = () => {
 
+    let timeOut = null;
     const [editorState,setEditorState] =useState({theme:null})
-    const {editorSocket}= useEditorSocketStore();
-    const {activeFileTab,setActiveFileTab} = useActiveFileTabStore();
+    const {activeFileTab} = useActiveFileTabStore();
+    const {editorSocket } =useEditorSocketStore();
     
 
     const DownloadTheme =async()=>{
@@ -26,13 +28,65 @@ const EditorComponent = () => {
         monaco.editor.setTheme('Dracula');
     }
 
-   
-    editorSocket?.on('readFileSuccess',({path,data})=>{
-        const extension =path.split('.').pop();
-        console.log("extension is here",extension);
-        setActiveFileTab(path,data)
-        console.log("hell form editor readfile success front",path,"this is data =>",data);
-    })
+    function handleChange(value,e){
+        
+        if(timeOut != null){
+            clearTimeout(timeOut)
+        }
+       timeOut = setTimeout(()=>{
+            
+            editorSocket.emit('writeFile',{
+                data:value,
+                pathToFileOrFolder:activeFileTab?.path
+            })
+       } ,2000);
+    }
+
+    function handleEditorlang(extension){
+        const fileTypes={
+            css: 'css',
+            js: 'javascript',
+            jsx: 'javascript',
+            ts: 'typescript',
+            tsx: 'typescript',
+            json: 'json',
+            html: 'html',
+            htm: 'html',
+            md: 'markdown',
+            markdown: 'markdown',
+            mjs: 'javascript',
+            cjs: 'javascript',
+            yaml: 'yaml',
+            yml: 'yaml',
+            xml: 'xml',
+            sh: 'shell',
+            bash: 'shell',
+            py: 'python',
+            pyw: 'python',
+            java: 'java',
+            c: 'c',
+            cpp: 'cpp',
+            cc: 'cpp',
+            h: 'cpp',
+            cs: 'csharp',
+            php: 'php',
+            go: 'go',
+            rs: 'rust',
+            swift: 'swift',
+            ruby: 'ruby',
+            rb: 'ruby',
+            sql: 'sql',
+            dockerfile: 'dockerfile',
+            makefile: 'makefile',
+            ini: 'ini',
+            toml: 'toml',
+            plist: 'xml',
+            vue: 'html',
+        }
+
+        return fileTypes[extension];
+    }
+
   return (
     <>
         {
@@ -40,13 +94,15 @@ const EditorComponent = () => {
             <Editor
                 height={'80vh'}
                 width={'100%'}
-                defaultLanguage='javascript'
+                defaultLanguage='plaintext'
                 defaultValue="//welcome to Playground"
                 options={{
                     fontSize:'20px'
                 }}
                 onMount={handleEditorThemeMount}  
+                onChange={handleChange}
                 value={activeFileTab?.value ? activeFileTab.value : "//welcome to Playground"}
+                language={activeFileTab?.extension ? handleEditorlang(activeFileTab.extension): 'plaintext'}
             />
         }
     </>
