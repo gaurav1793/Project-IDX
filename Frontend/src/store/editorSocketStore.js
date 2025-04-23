@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { useActiveFileTabStore } from "./activeFileTabStore"
+import { useTreeStructureStore } from "./treeStructureStore";
 
 
 
@@ -8,6 +9,7 @@ function editorSocketHandler(socket){
     const setActiveFileTabSetter = useActiveFileTabStore.getState().setActiveFileTab;
         //cannot use another hook in hook loop/condiotn/function
         //  but zustand give permisson to use it like this
+    const setTreeStructureSetter =useTreeStructureStore.getState().setTreeStructure;
     
     socket.on('readFileSuccess',({path,data})=>{
         const extension =path.split('.').pop();
@@ -23,6 +25,16 @@ function editorSocketHandler(socket){
         })
     })
 
+    socket.on('deletedFileSucces',()=>{
+        setTreeStructureSetter();
+        console.log('hello form delete success')
+    })
+
+    socket.on('renameSuccess',()=>{
+        console.log('helo before treestructure setter');
+        setTreeStructureSetter();
+        console.log("hello from rename success");
+    })
 
     socket.on('')
 }

@@ -2,14 +2,15 @@ import React, { useState } from 'react'
 import { IoIosArrowForward ,IoIosArrowDown } from "react-icons/io";
 import FileIcon from '../../atoms/FileIcon/FileIcon';
 import { useEditorSocketStore } from '../../../store/editorSocketStore';
-import FileContextMenu from '../ContextMenu/FileContextMenu';
 import { useFileContextMenuStore } from '../../../store/fileContextMenuStore';
+import { useFolderContextMenuStore } from '../../../store/folderContextMenuStore';
 
 
 const TreeNode = ({fileFolderData}) => {
     const [visiblity , setVisiblity]=useState({});
     const {editorSocket} = useEditorSocketStore();
-    const {x,y,setX ,setY,path,setPath}= useFileContextMenuStore();
+    const {setX ,setY,setOpen,setPath}= useFileContextMenuStore();
+    const {setX:folderX , setY:folderY , setOpen:folderOpen,setPath:folderPath}=useFolderContextMenuStore();
 
     function toggleVisiblity(name){
         setVisiblity({...visiblity, [name]:!visiblity[name]} )
@@ -33,11 +34,20 @@ const TreeNode = ({fileFolderData}) => {
         })
     }
 
+    function handleFolderRightClick(e,path){
+        e.preventDefault();
+        folderX(e.clientX);
+        folderY(e.clientY);
+        folderPath(path);
+        folderOpen(true);
+    }
+
     function handleRightClick(e,fileFolderData){
         e.preventDefault();
-        console.log(fileFolderData.path,e.screenX,e.screenY);
+        console.log(fileFolderData.path,e.clientX,e.clientY);
         setX(e.clientX);
         setY(e.clientY);
+        setOpen(true);
         setPath(fileFolderData.path);
     }
   return (
@@ -45,10 +55,14 @@ const TreeNode = ({fileFolderData}) => {
         <div className='pl-[10px]'>
             {
                 fileFolderData.children?
-                (<button onClick={()=>{toggleVisiblity(fileFolderData.name)}} className='pt-[5px] border-none outline-none cursor-pointer  text-[16px] text-white flex justify-center items-center'>
-                  { !visiblity[fileFolderData.name]? <IoIosArrowForward className='h-5 w-5' />:<IoIosArrowDown className='h-5 w-5'/>} <FileIcon extension={'folder'}/>{fileFolderData.name}
-                </button>):
-                ( <p className='pt-[5px]  pl-[20px]  text-white cursor-pointer text-[15px] flex'
+                (<button onClick={()=>{toggleVisiblity(fileFolderData.name)}}
+                    onContextMenu={(e)=>{handleFolderRightClick(e,fileFolderData.path)}}
+                    className='pt-[5px] border-none outline-none cursor-pointer  text-[16px] text-white flex justify-center items-center'>
+                    { !visiblity[fileFolderData.name]? <IoIosArrowForward className='h-5 w-5' />:<IoIosArrowDown className='h-5 w-5'/>} <FileIcon extension={'folder'}/>{fileFolderData.name}
+                    </button>
+                ):
+                (
+                <p className='pt-[5px]  pl-[25px]  text-white cursor-pointer text-[15px] flex'
                     onClick={()=>{handleClick(fileFolderData)}}
                     onContextMenu={(e)=>{handleRightClick(e,fileFolderData)}}
                 >

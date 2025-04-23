@@ -1,5 +1,5 @@
 import fs from 'fs/promises'
-
+import path from 'path'
 
 export const editorHandlerSocketEvent = (socket,editorNameSpace)=>{
 
@@ -98,10 +98,14 @@ export const editorHandlerSocketEvent = (socket,editorNameSpace)=>{
     })
 
 
-    socket.on('rename',async({pathToFileOrFolder})=>{
+    socket.on('rename',async({oldName,newName})=>{
+        console.log("hlo from rename",oldName,newName);
+        const dir = path.dirname(oldName);
+        const newPath = path.join(dir,newName);
+        console.log('new path',newPath)
         try {
-            const response = await fs.rename(pathToFileOrFolder,pathToFileOrFolder);
-            socket.on('renameSuccess',{
+            const response = await fs.rename(oldName,newPath);
+            socket.emit('renameSuccess',{
                 data:"rename success"
             })
         } catch (error) {

@@ -1,12 +1,12 @@
 import { create } from "zustand";
 
 
-export const useFileContextMenuStore=create((set)=>{
-    return{
+export const useFolderContextMenuStore = create((set)=>{
+    return {
         x:null,
         y:null,
-        isOpen:null,
         path:null,
+        isOpen:null,
         setX:(inComingX)=>{
             set({
                 x:inComingX
