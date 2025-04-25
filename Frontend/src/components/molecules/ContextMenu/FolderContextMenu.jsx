@@ -26,7 +26,12 @@ const FolderContextMenu = ({x,y,path}) => {
             setFolderInputOpen(false);
             console.log("tere folder ka path",path);
             console.log('tere folder k value',folderName)
-            console.log("emit krde bhai create folder");
+              const vsl =  `${path}\\${folderName}`
+              console.log('newPath',vsl);
+              const newPathFolder=path
+            editorSocket.emit('createFolder',{
+              newFolderPath:`${path}\\${folderName}`
+            })
         }
     }
 

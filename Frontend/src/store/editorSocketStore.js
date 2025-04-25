@@ -36,7 +36,10 @@ function editorSocketHandler(socket){
         console.log("hello from rename success");
     })
 
-    socket.on('')
+    socket.on('folderCreatedSuccess',()=>{
+        setTreeStructureSetter();
+        console.log("hello from folder creted success");
+    })
 }
 export const useEditorSocketStore = create((set)=>{
     return {

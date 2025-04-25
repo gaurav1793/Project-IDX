@@ -114,4 +114,19 @@ export const editorHandlerSocketEvent = (socket,editorNameSpace)=>{
             })
         }
     })
+
+    socket.on('createFolder',async({newFolderPath})=>{
+       try {
+        const safePath = path.normalize(newFolderPath)
+        console.log('back ', safePath);
+
+        // await fs.mkdir(newPath);
+        // socket.emit('folderCreatedSuccess',{
+        //     data:'created success'
+        // })
+       } catch (error) {
+        throw error
+       }
+        
+    })
 }
