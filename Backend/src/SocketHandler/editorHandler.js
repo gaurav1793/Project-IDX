@@ -26,25 +26,27 @@ export const editorHandlerSocketEvent = (socket,editorNameSpace)=>{
     })
 
     socket.on("createFile",async({pathToFileOrFolder})=>{
-        
-        const fileAlreadyExist = await fs.stat(pathToFileOrFolder);
-        if(fileAlreadyExist){
-            socket.emit('error',{
-                data :"file already exist"
-            })
-        }
-
         try {
-            const response =  await fs.writeFile(pathToFileOrFolder ,"");
-            socket.emit('createFileSuccess',{
-                data:'file created successfully'
-            })
-        } catch (error) {
-            console.log('error in create file',error.message);
-            socket.emit('error',{
-                data:`error in creating file ${error.message}`
-            })
+            const fileAlreadyExist = await fs.stat(pathToFileOrFolder);
+            if(fileAlreadyExist){
+                socket.emit('error',{
+                    data :"file already exist"
+                })
+            }
             
+        } catch (error) {
+            if(error.code=='ENOENT'){
+                const response =  await fs.writeFile(pathToFileOrFolder ,"");
+                socket.emit('createFileSuccess',{
+                    data:'file created successfully'
+                })
+            }
+            else{
+                console.log('error in create file',error.message);
+                socket.emit('error',{
+                    data:`error in creating file ${error.message}`
+                })
+            } 
         }
     })
 
@@ -78,22 +80,26 @@ export const editorHandlerSocketEvent = (socket,editorNameSpace)=>{
     })
 
     socket.on('createFolder' , async({pathToFileOrFolder})=>{
-        const folderAlreadyExist = await fs.stat(pathToFileOrFolder);
-        if(folderAlreadyExist){
-            socket.emit('folderExist',{
-                data:"folder already exsits"
-            })
-        }
-
         try {
-            const response = await fs.mkdir(pathToFileOrFolder);
-            socket.emit('folderCreated',{
-                data:'folder created succcessfully'
-            })
+            const folderAlreadyExist = await fs.stat(pathToFileOrFolder);
+            if(folderAlreadyExist){
+                socket.emit('folderExist',{
+                    data:"folder already exsits"
+                })
+            }           
         } catch (error) {
-            socket.emit('error',{
-                data:`error in creating folder ${error.message}`
-            })
+            if(error.code='ENOENT'){
+                const response = await fs.mkdir(pathToFileOrFolder);
+                socket.emit('folderCreated',{
+                    data:'folder created succcessfully'
+                })
+            }
+            else{
+                console.log('error',error.message);
+                socket.emit('error',{
+                    data:`error in creating folder ${error.message}`
+                })
+            }
         }
     })
 
@@ -115,18 +121,14 @@ export const editorHandlerSocketEvent = (socket,editorNameSpace)=>{
         }
     })
 
-    socket.on('createFolder',async({newFolderPath})=>{
-       try {
-        const safePath = path.normalize(newFolderPath)
-        console.log('back ', safePath);
-
-        // await fs.mkdir(newPath);
-        // socket.emit('folderCreatedSuccess',{
-        //     data:'created success'
-        // })
-       } catch (error) {
-        throw error
-       }
-        
+    socket.on('deleteFolder',async({path})=>{
+        try {
+            await fs.rm(path,{ recursive: true, force: true });
+            socket.emit('folderRemoved',{
+                data:'folder remove success'
+            })
+        } catch (error) {
+            throw error;
+        }
     })
 }

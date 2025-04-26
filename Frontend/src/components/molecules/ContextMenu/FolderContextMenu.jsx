@@ -8,11 +8,28 @@ const FolderContextMenu = ({x,y,path}) => {
     const {editorSocket} = useEditorSocketStore();
     const [folderName , setFolderName] =useState('');
     const [folderInputOpen ,setFolderInputOpen]=useState(false);
-
+    const [fileName,setFileName]=useState('');
+    const [fileInputOpen ,setFileInputOpen]=useState(false);
+    const [openRenameInput,setOpenRenameInput] = useState(false);
+    const [folderRename,setFolderRename]=useState('');
+  
     function handleCreateFile(){
-        console.log("clicked on create file");
+        setFileInputOpen(true);
     }
 
+    function handleFileName(e){
+      setFileName(e.target.value)
+    }
+
+    function handleFileEnter(e){
+      const newPath = `${path}\\${fileName}`
+      if(e.key=='Enter'){
+        editorSocket.emit('createFile',{
+          pathToFileOrFolder:newPath
+        })
+        setFileInputOpen(false)
+      }
+    }
     function handleCreateFolder(){
         setFolderInputOpen(true)
     }
@@ -30,9 +47,32 @@ const FolderContextMenu = ({x,y,path}) => {
               console.log('newPath',vsl);
               const newPathFolder=path
             editorSocket.emit('createFolder',{
-              newFolderPath:`${path}\\${folderName}`
+              pathToFileOrFolder:`${path}\\${folderName}`
             })
         }
+    }
+
+    function handleDelete(){
+      editorSocket.emit('deleteFolder',{
+        path:path
+      })
+    }
+
+    function handleRename(){
+      setOpenRenameInput(true);
+    }
+
+    function handleRenameInput(e){
+      setFolderRename(e.target.value);
+    }
+
+    function handleRenameEnter(e){
+      if(e.key=='Enter'){
+        editorSocket.emit('rename',{
+          oldName:path,
+          newName:folderRename
+        })
+      }
     }
 
   return (
@@ -46,17 +86,17 @@ const FolderContextMenu = ({x,y,path}) => {
         setOpen(false);
       }}
     >
-        <button className='w-[100%] h-[30px]  cursor-pointer rounded-md hover:bg-[#4d4b4b]' >Delete Folder</button>
+        <button className='w-[100%] h-[30px]  cursor-pointer rounded-md hover:bg-[#4d4b4b]' onClick={handleDelete}>Delete Folder</button>
         
-        {/* { openInput ? <input  
+        { openRenameInput ? <input  
                               className='text-black w-[100%] rounded-md'
-                              value={value}
-                              onChange={(e)=>{handleInput(e)}}
-                              onKeyDown={(e)=>{handleEnter(e)}}
+                              value={folderRename}
+                              onChange={(e)=>{handleRenameInput(e)}}
+                              onKeyDown={(e)=>{handleRenameEnter(e)}}
                               /> 
           :
          <button className='w-[100%] h-[30px]  cursor-pointer rounded-md hover:bg-[#4d4b4b]' onClick={handleRename}>Rename Folder</button>
-        } */}
+        }
         {   folderInputOpen?
 
             <input  
@@ -68,7 +108,15 @@ const FolderContextMenu = ({x,y,path}) => {
             :
             <button className='w-[100%] h-[30px]  cursor-pointer rounded-md hover:bg-[#4d4b4b]' onClick={handleCreateFolder}>Create Folder</button>
         }
-        <button className='w-[100%] h-[30px]  cursor-pointer rounded-md hover:bg-[#4d4b4b]' onClick={handleCreateFile}>Create File</button>
+       { fileInputOpen?
+          <input  
+          className='text-black w-[100%] rounded-md'
+          value={fileName}
+          onChange={(e)=>{handleFileName(e)}}
+          onKeyDown={(e)=>{handleFileEnter(e)}}
+        />
+        :
+        <button className='w-[100%] h-[30px]  cursor-pointer rounded-md hover:bg-[#4d4b4b]' onClick={handleCreateFile}>Create File</button>}
     </div>
   )
 }

@@ -36,9 +36,19 @@ function editorSocketHandler(socket){
         console.log("hello from rename success");
     })
 
-    socket.on('folderCreatedSuccess',()=>{
+    socket.on('folderCreated',()=>{
         setTreeStructureSetter();
         console.log("hello from folder creted success");
+    })
+
+    socket.on('folderRemoved',()=>{
+        setTreeStructureSetter();
+        console.log('removed folder success');
+    })
+
+    socket.on('createFileSuccess',()=>{
+        setTreeStructureSetter();
+        console.log('created success');
     })
 }
 export const useEditorSocketStore = create((set)=>{
