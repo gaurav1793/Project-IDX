@@ -92,7 +92,7 @@ const EditorComponent = () => {
         {
             editorState.theme &&
             <Editor
-                height={'80vh'}
+                height={'95vh'}
                 width={'100%'}
                 defaultLanguage='plaintext'
                 defaultValue="//welcome to Playground"

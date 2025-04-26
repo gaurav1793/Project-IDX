@@ -6,6 +6,7 @@ import TreeStructure from '../components/organisms/TreeStructure/TreeStructure'
 import { useTreeStructureStore } from '../store/treeStructureStore'
 import { useEditorSocketStore } from '../store/editorSocketStore'
 import { io } from 'socket.io-client'
+import BrowserTerminal from '../components/molecules/BrowserTerminal/BrowserTerminal'
 
 const ProjectPlayground = () => {
     const {projectId:projectIdFromUrl} =useParams();
@@ -36,7 +37,7 @@ const ProjectPlayground = () => {
                 <TreeStructure/>
             </div>
           }
-            <div className='flex flex-col w-[100%]'>
+            <div className='flex flex-col w-[80%] overflow-hidden'>
               <div>
                 <EditorButton isactive={false}/>
                 <EditorButton isactive={true}/>
@@ -44,7 +45,9 @@ const ProjectPlayground = () => {
               </div>
               
               <EditorComponent/>
+              <BrowserTerminal/>
             </div>
+            
         </div>
     </div>
   )

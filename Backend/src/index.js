@@ -62,6 +62,22 @@ editorNameSpace.on('connection',(socket)=>{
     })
 })
 
+const terminal = io.of('/terminal');
+terminal.on('connection',(socket)=>{
+    console.log('terminal connect');
+
+    socket.on('shell-input',(data)=>{
+        console.log(data);
+        socket.emit('shell-output',data)
+    })
+
+
+
+    socket.on('disconnet',()=>{
+        console.log('terminal disconnected ')
+    })
+})
+
 server.listen(PORT,()=>{
     console.log(`server started at PORT :${PORT}`);
 })
