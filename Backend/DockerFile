@@ -8,7 +8,7 @@ RUN useradd -ms /bin/bash sandbox
 WORKDIR /home/sandbox
 
 #update ubuntu machine
-RUN apt update and apt upgrade -y
+RUN apt update && apt upgrade -y
 
 #install nano and curl
 RUN apt install curl nano -y

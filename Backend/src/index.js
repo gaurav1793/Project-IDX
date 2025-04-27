@@ -8,6 +8,7 @@ import chokidar from 'chokidar'
 import { PORT } from './config/serverConfig.js';
 import apiRouter from '../src/routes/index.js'
 import { editorHandlerSocketEvent } from './SocketHandler/editorHandler.js'
+import { handleContainerCreate } from './containers/handleContainerCreate.js'
 
 const app = express();
 const server = createServer(app);
@@ -76,6 +77,8 @@ terminal.on('connection',(socket)=>{
     socket.on('disconnet',()=>{
         console.log('terminal disconnected ')
     })
+    let projectId=socket.handshake.query.projectId;
+    handleContainerCreate(projectId,socket);
 })
 
 server.listen(PORT,()=>{
