@@ -7,12 +7,15 @@ import { useTreeStructureStore } from '../store/treeStructureStore'
 import { useEditorSocketStore } from '../store/editorSocketStore'
 import { io } from 'socket.io-client'
 import BrowserTerminal from '../components/molecules/BrowserTerminal/BrowserTerminal'
+import { useTerminalSocketStore } from '../store/terminalSocketStore'
+
 
 const ProjectPlayground = () => {
     const {projectId:projectIdFromUrl} =useParams();
 
     const {projectId,setProjectId} =useTreeStructureStore();
     const { setEditorSocket} = useEditorSocketStore();
+    const {setTerminalSocket}=useTerminalSocketStore();
 
     useEffect(()=>{
      if(projectIdFromUrl){
@@ -22,7 +25,15 @@ const ProjectPlayground = () => {
             projectId:projectIdFromUrl
           }
         })
+
+        try {
+          const ws=new WebSocket("ws://localhost:3000/terminal?projectId="+projectIdFromUrl);
+          setTerminalSocket(ws);
+        } catch (error) {
+          console.log("error in creating websocket");
+        }
         setEditorSocket(editorSocketConn);
+
      }
     },[projectIdFromUrl,setProjectId ,setEditorSocket]);
   return (
