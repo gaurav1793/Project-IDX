@@ -8,14 +8,17 @@ import { useEditorSocketStore } from '../store/editorSocketStore'
 import { io } from 'socket.io-client'
 import BrowserTerminal from '../components/molecules/BrowserTerminal/BrowserTerminal'
 import { useTerminalSocketStore } from '../store/terminalSocketStore'
+import Browser from '../components/organisms/Browser/Browser'
+import { usePortStore } from '../store/portStore'
 
 
 const ProjectPlayground = () => {
     const {projectId:projectIdFromUrl} =useParams();
 
     const {projectId,setProjectId} =useTreeStructureStore();
-    const { setEditorSocket} = useEditorSocketStore();
-    const {setTerminalSocket}=useTerminalSocketStore();
+    const { editorSocket ,setEditorSocket} = useEditorSocketStore();
+    const { terminalSocket,setTerminalSocket}=useTerminalSocketStore();
+
 
     useEffect(()=>{
      if(projectIdFromUrl){
@@ -34,8 +37,15 @@ const ProjectPlayground = () => {
         }
         setEditorSocket(editorSocketConn);
 
+        // if(terminalSocket){
+        //   editorSocket?.emit("getPort",{
+        //     containerName:projectIdFromUrl
+        //   })
+        // }
+
      }
     },[projectIdFromUrl,setProjectId ,setEditorSocket]);
+
   return (
     
     <div>
@@ -48,7 +58,7 @@ const ProjectPlayground = () => {
                 <TreeStructure/>
             </div>
           }
-            <div className='flex flex-col w-[80%] overflow-hidden'>
+            <div className='flex flex-col min-w-[50%] overflow-hidden'>
               <div>
                 <EditorButton isactive={false}/>
                 <EditorButton isactive={true}/>
@@ -57,6 +67,9 @@ const ProjectPlayground = () => {
               
               <EditorComponent/>
               <BrowserTerminal/>
+            </div>
+            <div>
+              {projectId && terminalSocket && <Browser projectId={projectId}/>}
             </div>
             
         </div>

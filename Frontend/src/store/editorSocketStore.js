@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { useActiveFileTabStore } from "./activeFileTabStore"
 import { useTreeStructureStore } from "./treeStructureStore";
+import { usePortStore } from "./portStore";
 
 
 
@@ -10,6 +11,7 @@ function editorSocketHandler(socket){
         //cannot use another hook in hook loop/condiotn/function
         //  but zustand give permisson to use it like this
     const setTreeStructureSetter =useTreeStructureStore.getState().setTreeStructure;
+    const  portsetter= usePortStore.getState().setPort;
     
     socket.on('readFileSuccess',({path,data})=>{
         const extension =path.split('.').pop();
@@ -49,6 +51,11 @@ function editorSocketHandler(socket){
     socket.on('createFileSuccess',()=>{
         setTreeStructureSetter();
         console.log('created success');
+    })
+
+    socket.on("getPortSuccess",({port})=>{
+        console.log("port is ",port)
+        portsetter(port);
     })
 }
 export const useEditorSocketStore = create((set)=>{

@@ -46,14 +46,14 @@ export const handleContainerCreate = async(projectId ,terminalSocket,req,tcpSock
                 '5173/tcp':{}
             },
             Env:["HOST=0.0.0.0"],
-            HostConfig:{
-                Binds:[ //mounting the project directory to the container
+            HostConfig: {
+                Binds: [ // mounting the project directory to the container
                     `${process.cwd()}/projects/${projectId}:/home/sandbox/app`
                 ],
-                PortBindings:{
-                    '5173/tcp':[
+                PortBindings: {
+                    "5173/tcp": [
                         {
-                            'HostPort':'0'  //random port will be assigned by the docker
+                            "HostPort": "0" // random port will be assigned by docker
                         }
                     ]
                 },
@@ -74,3 +74,21 @@ export const handleContainerCreate = async(projectId ,terminalSocket,req,tcpSock
 
 }
 
+
+export async function getContainerPort(containerName) {
+    const container = await docker.listContainers({
+        name: containerName
+    });
+
+    if(container.length > 0) {
+        const containerInfo = await docker.getContainer(container[0].Id).inspect();
+        console.log("Container info", containerInfo);
+        try {
+            return containerInfo?.NetworkSettings?.Ports["5173/tcp"][0].HostPort;
+        } catch(error) {
+            console.log("port not present");
+            return undefined;
+        }
+        
+    }
+}
