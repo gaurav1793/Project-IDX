@@ -1,3 +1,5 @@
+import { Buffer } from "buffer";
+
 export const handleTerminalCreation = (container, ws) => {
     container.exec({
         Cmd: ["/bin/bash"],

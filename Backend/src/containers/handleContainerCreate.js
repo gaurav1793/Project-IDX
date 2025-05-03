@@ -15,10 +15,7 @@ export const listContainer = async () => {
 export const handleContainerCreate = async(projectId ,terminalSocket,req,tcpSocket,head)=>{
     try {
         const existingContainer = await docker.listContainers({
-            all: true, // include stopped containers too
-            filters: {
-                name: [projectId]
-            }
+                name:projectId
         });
 
 
@@ -43,7 +40,7 @@ export const handleContainerCreate = async(projectId ,terminalSocket,req,tcpSock
                 "/home/sandbox/app":{}
             },
             ExposedPorts:{
-                '5173/tcp':{}
+                "5173/tcp":{}
             },
             Env:["HOST=0.0.0.0"],
             HostConfig: {

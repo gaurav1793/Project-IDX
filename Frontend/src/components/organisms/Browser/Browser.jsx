@@ -20,7 +20,7 @@
                     containerName: projectId
                 })
             }
-        }, [port,editorSocket]);
+        }, [port,editorSocket]); 
 
         function handleRefresh() {
             if(browserRef.current) {
@@ -35,7 +35,7 @@
     return (
         <div className='bg-[#22212b]  w-[133%] border-2 border-yellow-300'>
             <div className='flex justify-center items-center gap-4 p-2'>
-            <RxReload color='red' size={30} onClick={handleRefresh}/>
+            <RxReload color='red' className='cursor-pointer' size={30} onClick={handleRefresh}/>
             <input  style={{
                 width:'100%',
                 height:'30px',

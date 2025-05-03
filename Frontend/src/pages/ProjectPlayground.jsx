@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import EditorComponent from '../components/molecules/EditorComponent/EditorComponent'
 import EditorButton from '../components/atoms/EditorButton/EditorButton'
@@ -18,6 +18,7 @@ const ProjectPlayground = () => {
     const {projectId,setProjectId} =useTreeStructureStore();
     const { editorSocket ,setEditorSocket} = useEditorSocketStore();
     const { terminalSocket,setTerminalSocket}=useTerminalSocketStore();
+    const [loadBrowser,setLoadBrowser] = useState(false);
 
 
     useEffect(()=>{
@@ -69,10 +70,10 @@ const ProjectPlayground = () => {
               <BrowserTerminal/>
             </div>
             <div>
-              {projectId && terminalSocket && <Browser projectId={projectId}/>}
+              {loadBrowser &&projectId && terminalSocket && <Browser projectId={projectId}/>}
             </div>
-            
         </div>
+        <button className='bg-purple-500 border-2 border-black rounded-md' onClick={()=>{setLoadBrowser(true)}}>get Browser</button>
     </div>
   )
 }

@@ -17,7 +17,8 @@ RUN apt install curl nano -y
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y nodejs
 
 #config terminal to display current workdir
-RUN echo "export PS1='\\u@\\h:\\w\\$ '" >> /home/sandbox/.bashrc
+# RUN echo "export PS1='\\u@\\h:\\w\\$ '" >> /home/sandbox/.bashrc
+RUN echo "PS1='\w '" >> /home/sandbox/.bashrc
 
 #setting final workdir
 WORKDIR /home/sandbox/app
