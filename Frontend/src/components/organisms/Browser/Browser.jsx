@@ -3,6 +3,9 @@
     import { usePortStore } from '../../../store/portStore';
     import { RxReload } from "react-icons/rx";
     import { useTerminalSocketStore } from '../../../store/terminalSocketStore';
+    import "allotment/dist/style.css";
+    import { useLoadBrowserStore } from '../../../store/loadBrowserStore';
+    import { FaRegWindowClose } from "react-icons/fa";
 
     const Browser = ({projectId}) => {
         
@@ -12,6 +15,7 @@
 
         const { editorSocket } = useEditorSocketStore();
         const {terminalSocket}=useTerminalSocketStore();
+        const {setLoadBrowser}=useLoadBrowserStore();
 
         useEffect(() => {
             if(!port ) {
@@ -28,14 +32,18 @@
                 browserRef.current.src = oldAddr;
             }
         }
+        function handleCross(){
+            console.log("clicked close");
+            setLoadBrowser(false);
+        }
 
         if(!port){
             return <div>Loading...</div>
         }
     return (
-        <div className='bg-[#22212b]  w-[133%] border-2 border-yellow-300'>
+        <div className='bg-[#22212b]'>
             <div className='flex justify-center items-center gap-4 p-2'>
-            <RxReload color='red' className='cursor-pointer' size={30} onClick={handleRefresh}/>
+            <RxReload color='green' className='cursor-pointer' size={30} onClick={handleRefresh}/>
             <input  style={{
                 width:'100%',
                 height:'30px',
@@ -46,7 +54,7 @@
                 }} 
                 defaultValue={`http://localhost:${port}`}
             />
-            
+            <FaRegWindowClose  color='red' className='cursor-pointer' size={30} onClick={handleCross}/>
             </div>
             <iframe ref={browserRef}
                 src={`http://localhost:${port}`}
@@ -56,6 +64,7 @@
                     border:'none'
                 }}
             />
+            
         </div>
     )
     }
