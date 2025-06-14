@@ -1,7 +1,6 @@
 import Docker from  'dockerode';
 
 const docker = new Docker();
-
 export const listContainer = async () => {
 
     const containers = await docker.listContainers();

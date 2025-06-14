@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: sandbox-app
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+    buildCommand: ""
+    startCommand: "npm start" # Replace with your actual command
